@@ -1,5 +1,6 @@
 // Runs on every YouTube page at document_start.
-// day: untouched · evening: gate + calm mode + grayscale · night: blocked (unless unlocked)
+// any time: dim Shorts/recs, reflect every Nth video in a row
+// evening: gate + calm mode + grayscale · night: blocked (unless unlocked)
 (() => {
   const root = document.documentElement;
   const TICK_SECONDS = 15;
@@ -89,10 +90,10 @@
         }
         .time { font-size: 15px; letter-spacing: .14em; text-transform: uppercase; opacity: .6; }
         h1 { font-size: 44px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 8px; }
-        p { font-size: 18px; opacity: .75; margin: 0 0 36px; max-width: 460px; line-height: 1.5; }
+        p { font-size: 18px; opacity: .75; margin: 0 auto 36px; max-width: 460px; line-height: 1.5; }
         .actions { display: flex; gap: 12px; justify-content: center; }
         button {
-          font: 500 16px inherit; font-family: inherit; padding: 13px 22px; border-radius: 999px; cursor: pointer;
+          font-size: 16px; font-weight: 500; font-family: inherit; padding: 13px 22px; border-radius: 999px; cursor: pointer;
           border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fffaf3;
           transition: background .2s, opacity .2s;
         }
@@ -107,6 +108,18 @@
           border: 1px solid rgba(255,255,255,.14); box-shadow: 0 8px 30px rgba(0,0,0,.25);
           pointer-events: none; animation: in .6s ease both;
         }
+        .count { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .55; margin-bottom: 4px; }
+        .question { font-family: "New York", "Iowan Old Style", Georgia, serif; font-style: italic; font-weight: 500; }
+        textarea {
+          display: block; width: min(520px, 80vw); margin: 0 auto 10px; resize: none;
+          font-size: 17px; line-height: 1.5; font-family: inherit; color: #fffaf3;
+          background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.2); border-radius: 14px;
+          padding: 14px 16px; outline: none;
+        }
+        textarea:focus { border-color: rgba(255,255,255,.45); }
+        textarea::placeholder { color: rgba(255,250,243,.4); }
+        .words { font-size: 13px; opacity: .5; margin-bottom: 26px; font-variant-numeric: tabular-nums; }
+        .gate.reflect { background: radial-gradient(120% 120% at 70% 110%, #3e8e7e 0%, #1f3b5a 45%, #0b1426 100%); }
         @keyframes in { from { opacity: 0; } }
         @keyframes out { to { opacity: 0; } }
         @keyframes breathe { 0%,100% { transform: scale(.7); opacity: .7; } 50% { transform: scale(1.15); opacity: 1; } }
@@ -168,6 +181,94 @@
     });
   }
 
+  // ---------- "videos in a row" reflection ----------
+  const QUESTIONS = [
+    "What are you learning right now?",
+    "Who are you becoming with this?",
+    "Is this the person you want to be today?",
+    "What would you rather do with the next hour?",
+    "What made you click on this one?",
+    "Will you remember this video tomorrow?",
+  ];
+  let reflecting = false;
+
+  function videoId() {
+    if (location.pathname === "/watch") return new URLSearchParams(location.search).get("v");
+    const m = /^\/shorts\/([\w-]+)/.exec(location.pathname);
+    return m ? `short:${m[1]}` : null;
+  }
+
+  function overlayOpen() {
+    return Boolean(ui?.shadow.querySelector(".gate"));
+  }
+
+  function showReflection(count) {
+    if (reflecting || overlayOpen()) return;
+    reflecting = true;
+    const { shadow } = ensureUI();
+    const question = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+    const min = state.settings.reflectionMinWords;
+    const card = document.createElement("div");
+    card.className = "gate reflect";
+    card.innerHTML = `
+      <div>
+        <div class="count"></div>
+        <h1 class="question"></h1>
+        <p>This is the moment the pattern usually carries on by itself. Pause. Answer honestly.</p>
+        <textarea rows="3" placeholder="A few honest words…"></textarea>
+        <div class="words"></div>
+        <div class="actions">
+          <button class="primary" data-act="save">Save it for later</button>
+          <button data-act="continue" disabled>Continue</button>
+        </div>
+      </div>`;
+    card.querySelector(".count").textContent = `Video ${count} in a row`;
+    card.querySelector(".question").textContent = question;
+    shadow.appendChild(card);
+
+    const input = card.querySelector("textarea");
+    const words = card.querySelector(".words");
+    const cont = card.querySelector('[data-act="continue"]');
+    const pauser = setInterval(pauseVideos, 250);
+    const update = () => {
+      const n = input.value.trim().split(/\s+/).filter(Boolean).length;
+      words.textContent = n >= min ? "Thank you." : `${n} / ${min} words`;
+      cont.disabled = n < min;
+    };
+    update();
+    input.addEventListener("input", update);
+    // Keep YouTube's keyboard shortcuts (space, k, j, l…) from firing while typing.
+    input.addEventListener("keydown", (e) => e.stopPropagation());
+    setTimeout(() => input.focus(), 50);
+
+    const finish = async (act) => {
+      clearInterval(pauser);
+      await send({ type: "reflect", answer: input.value.trim(), question, count, title: videoTitle() });
+      if (act === "save") return park("saved");
+      card.classList.add("out");
+      setTimeout(() => card.remove(), 450);
+      reflecting = false;
+    };
+    card.addEventListener("click", (e) => {
+      const act = e.target?.dataset?.act;
+      if (act === "save") finish("save");
+      if (act === "continue" && !cont.disabled) finish("continue");
+    });
+  }
+
+  let lastCounted = null;
+  function watchForNewVideos() {
+    setInterval(async () => {
+      const id = videoId();
+      if (!id || id === lastCounted) return;
+      const video = document.querySelector("video");
+      if (!video || video.paused || video.currentTime < 3) return; // only count videos that actually play
+      lastCounted = id;
+      const res = await send({ type: "videoStarted", id });
+      if (res?.pending) showReflection(res.count);
+    }, 1000);
+  }
+
   function updatePill() {
     const { pill } = ensureUI();
     const mins = Math.round(state.watchSeconds / 60);
@@ -195,6 +296,7 @@
       return false;
     }
     root.classList.toggle("sus-calm", state.calm);
+    root.classList.toggle("sus-dim", Boolean(state.settings.dimAlways) && !state.calm);
     if (state.calm) {
       applyGray();
       disableAutoplay();
@@ -212,6 +314,12 @@
     if (!ok || !state) return;
 
     const onReady = () => {
+      watchForNewVideos();
+      // A reflection that was due but skipped (e.g. tab reloaded) still needs an answer.
+      if (state.streak?.pending && videoId()) {
+        lastCounted = videoId();
+        showReflection(state.streak.count);
+      }
       if (!state.calm) return;
       updatePill();
       const passed = Number(sessionStorage.getItem("susGatePassed") || 0);
@@ -222,7 +330,7 @@
     else document.addEventListener("DOMContentLoaded", onReady, { once: true });
 
     setInterval(async () => {
-      if (state?.calm && isWatching()) {
+      if (state && isWatching()) {
         const res = await send({ type: "watched", seconds: TICK_SECONDS });
         if (res) state.watchSeconds = res.watchSeconds;
       }

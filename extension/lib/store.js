@@ -54,3 +54,13 @@ export async function addWatchSeconds(seconds, date, settings) {
   await setLocal("watch", watch);
   return watch[key];
 }
+
+export async function getReflections() {
+  return getLocal("reflections", []);
+}
+
+export async function addReflection(entry) {
+  const list = await getReflections();
+  list.push(entry);
+  await setLocal("reflections", list.slice(-500));
+}

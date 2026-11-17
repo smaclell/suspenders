@@ -14,6 +14,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   customQuotes: [], // [{ text, author }]
   showBuiltInQuotes: true,
   noteWeight: 0.6, // chance of showing a note passage when the helper is available
+  interruptEvery: 3, // reflect on every Nth video in a row (0 = off)
+  streakGapMinutes: 30, // a break this long starts a new streak
+  reflectionMinWords: 3,
+  dimAlways: true, // dim Shorts + recommendations at any time of day
 });
 
 /** "HH:MM" → minutes after midnight. */

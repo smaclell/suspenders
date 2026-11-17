@@ -3,6 +3,9 @@
 Gentle support for the habits you're building.
 
 - **A calm new tab.** The clock, a greeting and one thing to read: a quote that matches your values, or a passage from your own Obsidian notes. A small daily nudge towards the person you want to be.
+- **Interrupts the autopilot on YouTube, any time of day.**
+  - Shorts and recommendations are dimmed and grey. They come partway back only if you hover over them on purpose.
+  - On every 3rd video in a row (Shorts count), a reflection card asks something like *"What are you learning?"* or *"Who are you becoming with this?"*. Write a few words to continue, or save the video for later. Answers collect under **Settings → Reflections**.
 - **Evening friction on YouTube (8:30 PM by default).**
   - A 10-second pause before each visit.
   - Recommendations, Shorts and autoplay are hidden.
@@ -97,8 +100,8 @@ The extension and the helper each keep their own sign-off time. If you change it
 
 ## The late-night log
 
-- **In the extension:** unlock reasons are kept and shown under **Settings → Late-night reasons**. You can copy them as Markdown.
-- **With the helper running:** reasons, wind-down reflections and every "15 more minutes" are also appended to a Markdown file. It goes in Application Support by default, or in your vault if you set `reasonsLogInVault`.
+- **In the extension:** unlock reasons and video reflections are kept under **Settings → Late-night reasons** and **Settings → Reflections**. You can copy both as Markdown.
+- **With the helper running:** reasons, video reflections, wind-down reflections and every "15 more minutes" are also appended to a Markdown file. It goes in Application Support by default, or in your vault if you set `reasonsLogInVault`.
 
 ## Privacy
 

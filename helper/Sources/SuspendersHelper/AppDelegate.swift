@@ -86,7 +86,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         case ("POST", "/reasons"):
             guard let obj = try? JSONSerialization.jsonObject(with: req.body) as? [String: Any],
                   let reason = obj["reason"] as? String, !reason.isEmpty else { return .init(status: 400, json: ["error": "reason required"]) }
-            appendLog(kind: "Unlocked", site: obj["site"] as? String, text: String(reason.prefix(4000)))
+            let kind = (obj["kind"] as? String).flatMap { ["Unlocked", "Reflection"].contains($0) ? $0 : nil } ?? "Unlocked"
+            var text = String(reason.prefix(4000))
+            if kind == "Reflection", let q = obj["question"] as? String, !q.isEmpty {
+                text = "_\(q.prefix(200))_ \(text)"
+                if let title = obj["title"] as? String, !title.isEmpty { text += " (\(title.prefix(200)))" }
+            }
+            appendLog(kind: kind, site: obj["site"] as? String, text: text)
             return .init(json: ["ok": true])
         default:
             return .init(status: 404, json: ["error": "not found"])

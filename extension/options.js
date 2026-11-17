@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS, parseTime } from "./lib/schedule.js";
-import { getSettings, saveSettings, getReasons } from "./lib/store.js";
+import { getSettings, saveSettings, getReasons, getReflections } from "./lib/store.js";
 import { textToQuotes } from "./lib/quotes.js";
 import { fetchStatus } from "./lib/helper.js";
 
@@ -24,6 +24,7 @@ function read() {
   const out = { ...data };
   for (const k of NUMBER_FIELDS) out[k] = Number(data[k]);
   out.showBuiltInQuotes = form.elements.showBuiltInQuotes.checked;
+  out.dimAlways = form.elements.dimAlways.checked;
   out.customQuotes = textToQuotes(data.customQuotes || "");
   for (const k of ["eveningStart", "nightStart", "morningStart"]) parseTime(out[k]); // validate
   return out;
@@ -53,6 +54,50 @@ async function renderReasons() {
   }
 }
 
+function fmtWhen(iso) {
+  return new Date(iso).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+async function renderReflections() {
+  const items = (await getReflections()).slice().reverse();
+  const list = document.getElementById("reflections-list");
+  const summary = document.getElementById("reflections-summary");
+  list.replaceChildren();
+  if (!items.length) {
+    summary.textContent = "Every few videos in a row, you'll be asked what you're learning. Your answers collect here.";
+    return;
+  }
+  const weekAgo = Date.now() - 7 * 86_400_000;
+  const week = items.filter((r) => Date.parse(r.at) > weekAgo).length;
+  summary.textContent = `${items.length} total · ${week} in the last 7 days`;
+  for (const r of items) {
+    const li = document.createElement("li");
+    const time = document.createElement("time");
+    time.dateTime = r.at;
+    time.textContent = `${fmtWhen(r.at)} · video ${r.count ?? "?"} in a row${r.title ? ` · ${r.title}` : ""}`;
+    const q = document.createElement("p");
+    q.className = "q";
+    q.textContent = r.question || "";
+    const p = document.createElement("p");
+    p.textContent = r.reason || "(no answer)";
+    li.append(time, q, p);
+    list.append(li);
+  }
+}
+
+async function exportReflections() {
+  const items = await getReflections();
+  const md = [
+    "# YouTube reflections",
+    "",
+    ...items.map((r) => `- **${new Date(r.at).toLocaleString()}** · ${r.question} — ${r.reason}${r.title ? ` _(${r.title})_` : ""}`),
+  ].join("\n");
+  await navigator.clipboard.writeText(md);
+  const btn = document.getElementById("export-reflections");
+  btn.textContent = "Copied ✓";
+  setTimeout(() => (btn.textContent = "Copy as Markdown"), 1500);
+}
+
 async function exportMarkdown() {
   const reasons = await getReasons();
   const md = ["# Late-night reasons", "", ...reasons.map((r) => `- **${new Date(r.at).toLocaleString()}** — ${r.reason}`)].join("\n");
@@ -76,6 +121,7 @@ async function main() {
   const settings = await getSettings();
   fill(settings);
   renderReasons();
+  renderReflections();
   checkHelper(settings.helperPort);
 
   form.addEventListener("submit", async (e) => {
@@ -92,8 +138,10 @@ async function main() {
     }
   });
   document.getElementById("export").addEventListener("click", exportMarkdown);
+  document.getElementById("export-reflections").addEventListener("click", exportReflections);
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.reasons) renderReasons();
+    if (changes.reflections) renderReflections();
   });
 }
 

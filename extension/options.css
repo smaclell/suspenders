@@ -79,3 +79,4 @@ button.ghost { background: transparent; color: var(--accent); border: 1px solid 
 .reasons li { border-top: 1px solid var(--line); padding: 12px 0; }
 .reasons time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .reasons p { margin: 4px 0 0; font-family: "New York", "Iowan Old Style", Georgia, serif; font-size: 16px; }
+.reasons p.q { font-family: inherit; font-size: 13px; font-style: italic; color: var(--muted); margin-top: 2px; }

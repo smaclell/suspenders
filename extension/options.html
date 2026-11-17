@@ -32,6 +32,16 @@
       </section>
 
       <section>
+        <h2>YouTube, any time</h2>
+        <label class="check"><input type="checkbox" name="dimAlways" /> Dim Shorts and recommendations all day</label>
+        <div class="grid">
+          <label>Reflect every Nth video in a row (0 = off) <input type="number" name="interruptEvery" min="0" max="50" required /></label>
+          <label>Minutes of break that end a streak <input type="number" name="streakGapMinutes" min="1" max="240" required /></label>
+          <label>Minimum words in a reflection <input type="number" name="reflectionMinWords" min="0" max="50" required /></label>
+        </div>
+      </section>
+
+      <section>
         <h2>Late-night unlock</h2>
         <div class="grid">
           <label>Minimum words in reason <input type="number" name="minReasonWords" min="1" max="200" required /></label>
@@ -67,6 +77,16 @@
       </div>
       <p id="reasons-summary" class="muted"></p>
       <ol id="reasons-list" class="reasons"></ol>
+    </section>
+    <section id="reflections">
+      <div class="section-head">
+        <h2>Reflections</h2>
+        <div>
+          <button type="button" id="export-reflections" class="ghost">Copy as Markdown</button>
+        </div>
+      </div>
+      <p id="reflections-summary" class="muted"></p>
+      <ol id="reflections-list" class="reasons"></ol>
     </section>
   </main>
   <script type="module" src="options.js"></script>

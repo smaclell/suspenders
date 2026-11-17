@@ -41,3 +41,45 @@ html.sus-calm ytd-browse[page-subtype="home"] #primary::before {
   font: 500 20px/1.4 "Roboto", system-ui, sans-serif;
   color: var(--yt-spec-text-secondary, #888);
 }
+
+/* ---------- Any time of day: dim Shorts + recommendations ----------
+   They stay visible (so search and subscriptions still work) but faded and grey.
+   Hovering deliberately brings one back — slowly. */
+html.sus-dim ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.sus-dim #secondary #related,
+html.sus-dim ytd-watch-next-secondary-results-renderer,
+html.sus-dim ytd-reel-shelf-renderer,
+html.sus-dim ytd-rich-shelf-renderer[is-shorts],
+html.sus-dim ytd-rich-section-renderer,
+html.sus-dim grid-shelf-view-model,
+html.sus-dim ytd-search ytd-shelf-renderer,
+html.sus-dim ytd-search ytd-horizontal-card-list-renderer,
+html.sus-dim ytd-search ytd-reel-item-renderer,
+html.sus-dim .ytp-endscreen-content,
+html.sus-dim .videowall-endscreen,
+html.sus-dim .ytp-ce-element,
+html.sus-dim ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.sus-dim ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
+  opacity: 0.22 !important;
+  filter: grayscale(1) blur(0.4px);
+  transition: opacity 0.6s ease, filter 0.6s ease;
+}
+
+/* Deliberately hovering for 1.5s brings a section partway back. */
+html.sus-dim ytd-browse[page-subtype="home"] ytd-rich-grid-renderer:hover,
+html.sus-dim #secondary #related:hover,
+html.sus-dim ytd-watch-next-secondary-results-renderer:hover,
+html.sus-dim ytd-reel-shelf-renderer:hover,
+html.sus-dim ytd-rich-shelf-renderer[is-shorts]:hover,
+html.sus-dim ytd-rich-section-renderer:hover,
+html.sus-dim grid-shelf-view-model:hover,
+html.sus-dim ytd-search ytd-shelf-renderer:hover,
+html.sus-dim ytd-search ytd-horizontal-card-list-renderer:hover,
+html.sus-dim ytd-search ytd-reel-item-renderer:hover {
+  opacity: 0.75 !important;
+  filter: grayscale(0.6);
+  transition: opacity 0.8s ease 1.5s, filter 0.8s ease 1.5s;
+}
+
+/* Autoplay countdown is never dimmed into a trap: hide it outright. */
+html.sus-dim .ytp-autonav-endscreen-countdown-overlay { display: none !important; }

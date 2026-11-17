@@ -22,6 +22,7 @@ export function fetchStatus(port) {
   return request(port, "/status");
 }
 
+/** entry.kind: "Unlocked" (default) or "Reflection". */
 export function postReason(port, entry) {
   return request(
     port,
