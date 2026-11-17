@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Suspenders",
+  "version": "0.1.0",
+  "description": "A calm new tab that nudges you towards who you want to be, gentle YouTube friction in the evening, and a soft push to sign off at night.",
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "chrome_url_overrides": { "newtab": "newtab.html" },
+  "options_page": "options.html",
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["storage"],
+  "host_permissions": ["*://*.youtube.com/*", "http://127.0.0.1/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content/youtube.js"],
+      "css": ["content/youtube.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["blocked.html"], "matches": ["*://*.youtube.com/*"] }
+  ]
+}

@@ -1,0 +1,43 @@
+/* Hide the page until Suspenders decides what to do (max 1.5s failsafe). */
+html.sus-pending body { visibility: hidden !important; }
+
+/* Evening "calm mode": slowly desaturate as watch time grows. */
+html.sus-calm {
+  filter: grayscale(var(--sus-gray, 0));
+  transition: filter 4s ease;
+}
+
+/* Home feed */
+html.sus-calm ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.sus-calm ytd-browse[page-subtype="home"] #chips-wrapper,
+/* Watch page: up next / related */
+html.sus-calm #secondary #related,
+html.sus-calm ytd-watch-next-secondary-results-renderer,
+html.sus-calm ytd-compact-autoplay-renderer,
+/* End screens and cards */
+html.sus-calm .ytp-endscreen-content,
+html.sus-calm .videowall-endscreen,
+html.sus-calm .ytp-ce-element,
+html.sus-calm .ytp-autonav-endscreen-countdown-overlay,
+html.sus-calm .ytp-next-button,
+/* Shorts everywhere */
+html.sus-calm ytd-reel-shelf-renderer,
+html.sus-calm ytd-rich-shelf-renderer[is-shorts],
+html.sus-calm ytd-rich-section-renderer,
+html.sus-calm ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.sus-calm ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+html.sus-calm grid-shelf-view-model,
+/* Search results: shorts and "people also watched" shelves */
+html.sus-calm ytd-search ytd-shelf-renderer,
+html.sus-calm ytd-search ytd-horizontal-card-list-renderer {
+  display: none !important;
+}
+
+html.sus-calm ytd-browse[page-subtype="home"] #primary::before {
+  content: "Calm mode — search for what you came for.";
+  display: block;
+  padding: 18vh 24px 0;
+  text-align: center;
+  font: 500 20px/1.4 "Roboto", system-ui, sans-serif;
+  color: var(--yt-spec-text-secondary, #888);
+}

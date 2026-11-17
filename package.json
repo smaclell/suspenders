@@ -1,0 +1,12 @@
+{
+  "name": "suspenders",
+  "private": true,
+  "type": "module",
+  "description": "Habit nudges: a calm new tab, evening YouTube friction and gentle sign-off reminders.",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "helper:build": "./helper/build-app.sh",
+    "zip": "cd extension && zip -qr ../suspenders-extension.zip . -x '.*'"
+  },
+  "license": "MIT"
+}

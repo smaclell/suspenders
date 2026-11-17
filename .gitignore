@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+helper/.build/
+helper/build/
+helper/.swiftpm/
+*.zip
+# personal config never belongs in the repo
+config.json
+.claude/

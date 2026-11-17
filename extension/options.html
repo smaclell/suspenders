@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suspenders · Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Suspenders</h1>
+      <p class="lede">Small nudges towards the person you want to be.</p>
+      <p id="helper" class="helper-status"><span class="dot"></span><span id="helper-text">Checking for the Mac helper…</span></p>
+    </header>
+
+    <form id="form">
+      <section>
+        <h2>You</h2>
+        <label>Name for the greeting <input name="name" placeholder="optional" maxlength="40" /></label>
+      </section>
+
+      <section>
+        <h2>Evening rhythm</h2>
+        <div class="grid">
+          <label>YouTube calm mode from <input type="time" name="eveningStart" required /></label>
+          <label>Sign off &amp; block YouTube at <input type="time" name="nightStart" required /></label>
+          <label>Back to normal at <input type="time" name="morningStart" required /></label>
+          <label>Pause gate (seconds) <input type="number" name="gateSeconds" min="0" max="120" required /></label>
+          <label>Minutes until fully grey <input type="number" name="grayscaleFullMinutes" min="1" max="240" required /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Late-night unlock</h2>
+        <div class="grid">
+          <label>Minimum words in reason <input type="number" name="minReasonWords" min="1" max="200" required /></label>
+          <label>Wait before unlocking (minutes) <input type="number" name="unlockWaitMinutes" min="0" max="60" required /></label>
+          <label>Unlock lasts (minutes) <input type="number" name="unlockDurationMinutes" min="1" max="120" required /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>New tab</h2>
+        <label class="check"><input type="checkbox" name="showBuiltInQuotes" /> Include built-in quotes (rest, craft, growth)</label>
+        <label>Your own quotes — one per line, optional <code>— Author</code>
+          <textarea name="customQuotes" rows="6" placeholder="Be where your feet are. — Unknown"></textarea>
+        </label>
+        <div class="grid">
+          <label>Chance of a note passage (0–1) <input type="number" name="noteWeight" min="0" max="1" step="0.05" required /></label>
+          <label>Helper port <input type="number" name="helperPort" min="1024" max="65535" required /></label>
+        </div>
+      </section>
+
+      <div class="save-row">
+        <button type="submit">Save</button>
+        <span id="saved" class="saved" hidden>Saved ✓</span>
+      </div>
+    </form>
+
+    <section id="reasons">
+      <div class="section-head">
+        <h2>Late-night reasons</h2>
+        <div>
+          <button type="button" id="export" class="ghost">Copy as Markdown</button>
+        </div>
+      </div>
+      <p id="reasons-summary" class="muted"></p>
+      <ol id="reasons-list" class="reasons"></ol>
+    </section>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

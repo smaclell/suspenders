@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resting · Suspenders</title>
+  <link rel="stylesheet" href="newtab.css" />
+  <link rel="stylesheet" href="blocked.css" />
+</head>
+<body data-sky="night">
+  <div class="sky" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="grain"></div>
+  </div>
+
+  <main class="rest">
+    <div class="moon" aria-hidden="true"></div>
+    <p class="eyebrow" id="clock"></p>
+    <h1>YouTube is resting.</h1>
+    <p class="sub" id="sub">It'll be back in the morning. So will you, a little more rested.</p>
+    <blockquote id="quote" class="rest-quote"></blockquote>
+
+    <div class="actions" id="actions">
+      <button class="primary" id="close">Close this tab</button>
+      <button class="ghost" id="need">I really need it…</button>
+    </div>
+
+    <!-- Step 1: reason -->
+    <section id="step-reason" class="panel" hidden>
+      <label for="reason">Why do you need YouTube right now?</label>
+      <p class="hint">Write it like you'd explain it to yourself tomorrow morning. At least <span id="min-words">20</span> words.</p>
+      <textarea id="reason" rows="5" placeholder="I need to…"></textarea>
+      <div class="row">
+        <span id="word-count" class="count">0 words</span>
+        <span class="spacer"></span>
+        <button class="ghost" id="cancel-reason">Never mind</button>
+        <button class="primary" id="submit-reason" disabled>Start the wait</button>
+      </div>
+    </section>
+
+    <!-- Step 2: wait -->
+    <section id="step-wait" class="panel" hidden>
+      <div class="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="54" class="track" />
+          <circle cx="60" cy="60" r="54" class="progress" id="progress" />
+        </svg>
+        <div class="ring-label" id="remaining">5:00</div>
+      </div>
+      <p class="hint" id="wait-hint">Still need it when the timer ends? Then it's probably real.</p>
+      <p class="your-reason" id="your-reason"></p>
+      <div class="row center">
+        <button class="ghost" id="cancel-wait">I'll leave it</button>
+        <button class="primary" id="unlock" disabled>Unlock</button>
+      </div>
+    </section>
+
+    <p class="footnote"><span id="history"></span> <a href="options.html#reasons" id="history-link">Past reasons</a></p>
+  </main>
+
+  <script type="module" src="blocked.js"></script>
+</body>
+</html>

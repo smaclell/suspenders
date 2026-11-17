@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Tab</title>
+  <link rel="stylesheet" href="newtab.css" />
+</head>
+<body data-sky="day">
+  <div class="sky" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="top">
+    <div id="status" class="pill" hidden></div>
+  </header>
+
+  <main class="center">
+    <div id="clock" class="clock">--:--</div>
+    <h1 id="greeting" class="greeting"></h1>
+
+    <form id="intention" class="intention" autocomplete="off">
+      <label for="intention-input" id="intention-label">Who do I want to be today?</label>
+      <input id="intention-input" maxlength="120" placeholder="" />
+      <p id="intention-text" class="intention-text" hidden></p>
+    </form>
+  </main>
+
+  <footer class="bottom">
+    <figure id="card" class="card" tabindex="0" aria-live="polite">
+      <div id="card-kicker" class="kicker"></div>
+      <blockquote id="card-text" class="card-text"></blockquote>
+      <figcaption id="card-caption" class="caption"></figcaption>
+    </figure>
+    <nav class="corner">
+      <button id="next" class="icon-btn" title="Another (space)" aria-label="Show another">↻</button>
+      <a href="options.html" class="icon-btn" title="Settings" aria-label="Settings">⚙︎</a>
+    </nav>
+  </footer>
+
+  <script type="module" src="newtab.js"></script>
+</body>
+</html>
