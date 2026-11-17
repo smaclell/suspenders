@@ -18,13 +18,24 @@
   <main class="rest">
     <div class="moon" aria-hidden="true"></div>
     <p class="eyebrow" id="clock"></p>
-    <h1>YouTube is resting.</h1>
+    <h1 id="headline">YouTube is resting.</h1>
     <p class="sub" id="sub">It'll be back in the morning. So will you, a little more rested.</p>
     <blockquote id="quote" class="rest-quote"></blockquote>
 
+    <!-- The page you were on, kept safe until morning -->
+    <section id="saved" class="saved-card" hidden>
+      <div class="saved-kicker" id="saved-kicker">Waiting for you in the morning</div>
+      <a id="saved-link" class="saved-title"></a>
+      <div class="saved-row">
+        <span id="saved-url" class="saved-url"></span>
+        <button class="mini" id="copy-link" type="button">Copy link</button>
+      </div>
+    </section>
+
     <div class="actions" id="actions">
-      <button class="primary" id="close">Close this tab</button>
+      <button class="primary" id="close">Save it for tomorrow</button>
       <button class="ghost" id="need">I really need it…</button>
+      <button class="ghost" id="open-now" hidden>Open it now</button>
     </div>
 
     <!-- Step 1: reason -->
@@ -52,7 +63,7 @@
       <p class="hint" id="wait-hint">Still need it when the timer ends? Then it's probably real.</p>
       <p class="your-reason" id="your-reason"></p>
       <div class="row center">
-        <button class="ghost" id="cancel-wait">I'll leave it</button>
+        <button class="ghost" id="cancel-wait">Save it for tomorrow</button>
         <button class="primary" id="unlock" disabled>Unlock</button>
       </div>
     </section>

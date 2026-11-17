@@ -59,10 +59,6 @@ const handlers = {
   startUnlock: ({ reason }) => startUnlock(reason),
   cancelUnlock: () => chrome.storage.local.remove("pendingUnlock").then(() => ({ ok: true })),
   completeUnlock: () => completeUnlock(),
-  closeTab: async (_msg, sender) => {
-    if (sender.tab?.id != null) await chrome.tabs.remove(sender.tab.id);
-    return { ok: true };
-  },
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {

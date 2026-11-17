@@ -19,9 +19,28 @@
   root.classList.add("sus-pending");
   const failsafe = setTimeout(() => root.classList.remove("sus-pending"), 1500);
 
+  /** The current URL, with the video's position so it resumes where you left off. */
+  function resumableURL() {
+    const url = new URL(location.href);
+    const video = document.querySelector("video");
+    if (url.pathname === "/watch" && video && video.currentTime > 5) url.searchParams.set("t", `${Math.floor(video.currentTime)}s`);
+    return url.href;
+  }
+
+  function videoTitle() {
+    return document.title.replace(/^\(\d+\)\s*/, "").replace(/\s*-\s*YouTube$/, "").trim();
+  }
+
+  /** Park this tab on the resting page — it keeps the link so nothing is lost. */
+  function park(mode) {
+    const params = new URLSearchParams({ from: resumableURL(), mode });
+    const title = videoTitle();
+    if (title && title !== "YouTube") params.set("title", title);
+    location.replace(chrome.runtime.getURL("blocked.html") + "?" + params);
+  }
+
   function goToBlocked() {
-    const url = chrome.runtime.getURL("blocked.html") + "?from=" + encodeURIComponent(location.href);
-    location.replace(url);
+    park("night");
   }
 
   function pauseVideos() {
@@ -111,7 +130,7 @@
         <h1>Do I need this right now?</h1>
         <p>Take a breath. If it's worth watching, it'll still be worth it in a moment.</p>
         <div class="actions">
-          <button class="primary" data-act="close">I'm done for tonight</button>
+          <button class="primary" data-act="close">Save it for later</button>
           <button data-act="continue" disabled></button>
         </div>
       </div>`;
@@ -134,7 +153,11 @@
 
     gate.addEventListener("click", (e) => {
       const act = e.target?.dataset?.act;
-      if (act === "close") send({ type: "closeTab" });
+      if (act === "close") {
+        clearInterval(pauser);
+        clearInterval(timer);
+        park("saved");
+      }
       if (act === "continue" && !cont.disabled) {
         sessionStorage.setItem("susGatePassed", String(Date.now()));
         clearInterval(pauser);
